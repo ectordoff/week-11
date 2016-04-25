@@ -1,0 +1,71 @@
+
+#include <Adafruit_NeoPixel.h>
+#ifdef __AVR__
+#include <avr/power.h>
+#endif
+
+#define PIN 6
+
+#define NUM_LEDS 30
+
+#define BRIGHTNESS 50
+
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRBW + NEO_KHZ800);
+
+int temp;
+int tempPin = A5;
+int tempColor;
+//set temp sensor pin
+
+
+
+
+void setup() {
+  Serial.begin(115200);
+
+  // initialize the temperature sensor pin
+  pinMode(tempPin, INPUT);
+
+
+  strip.setBrightness(BRIGHTNESS);
+  strip.begin();
+}
+
+
+void loop() {
+  // read the temperature sensor pin
+  temp = analogRead(tempPin);
+  Serial.println(temp);
+  strip.show();
+
+  // map it to 100 because dividing 100 by stuff is easier
+  tempColor = map(temp, 0, 1023, 0, 100);
+
+  uint16_t i;
+
+
+   for(i=0; i< strip.numPixels(); i++) 
+  {
+
+    //  // if statements to write colors to the strip
+    //depending on what the temp reading is
+    if (0 < tempColor && tempColor < 25) {
+      strip.setPixelColor(i, strip.Color(round(255), round(0), round(0))); // Red
+    }
+    if (26 < tempColor && tempColor < 50) {
+      strip.setPixelColor(1, strip.Color(round(0), round(255), round(0))); // Green
+    }
+    if (51 < tempColor && tempColor < 75) {
+      strip.setPixelColor(1, strip.Color(round(0), round(0), round(255))); // Blue
+    }
+    if (76 < tempColor && tempColor < 100) {
+      strip.setPixelColor(1, strip.Color(round(255), round(255), round(255))); // White
+    }
+    // if it's not reading properly from the sensor, it will be
+    // yellow
+    else {
+      strip.setPixelColor(i, strip.Color(round(255), round(255), round(0))); // yellow
+    }
+
+  }
+}
